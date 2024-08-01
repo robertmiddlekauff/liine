@@ -5,17 +5,18 @@ from restaurants.app.main import get_open_restaurants, is_open, parse_hours
 
 
 def test_parse_hours():
-    hours_str = "Mon-Thu 11:00 am - 11:00 pm / Fri-Sat 11:00 am - 12:30 am / Sun 10:00 am - 11:00 pm"
+    hours_str = "Mon-Thu 11:00 am - 8:00 pm + 9:00 pm - 10:00 pm / Fri-Sat 11:00 am - 12:30 am / Sun 10:00 am - 11:00 pm"
     schedule = parse_hours(hours_str)
-    assert len(schedule) == 7  # There should be 7 entries, one for each day
+    print(schedule)
+    assert len(schedule) == 11  # There should be 7 entries, one for each day
     assert schedule[0]["day"] == 0  # Monday
     assert schedule[0]["start"].strftime("%I:%M %p") == "11:00 AM"
-    assert schedule[0]["end"].strftime("%I:%M %p") == "11:00 PM"
+    assert schedule[0]["end"].strftime("%I:%M %p") == "08:00 PM"
     assert schedule[0]["after_midnight"] == False
-    assert schedule[5]["after_midnight"]  # Saturday should have after_midnight set to True
-    assert schedule[6]["day"] == 6  # Sunday
-    assert schedule[6]["start"].strftime("%I:%M %p") == "10:00 AM"
-    assert schedule[6]["end"].strftime("%I:%M %p") == "11:00 PM"
+    assert schedule[9]["after_midnight"]  # Saturday should have after_midnight set to True
+    assert schedule[10]["day"] == 6  # Sunday
+    assert schedule[10]["start"].strftime("%I:%M %p") == "10:00 AM"
+    assert schedule[10]["end"].strftime("%I:%M %p") == "11:00 PM"
 
 
 def test_is_open():

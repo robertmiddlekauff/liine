@@ -24,7 +24,8 @@ def parse_time(time_str):
 
 def parse_hours(hours_str):
     # parse pattern from regex
-    pattern = r"(?P<days>[A-Za-z-, ]+)\s+(?P<open_time>\d{1,2}(?::\d{2})? ?[ap]m)\s*-\s*(?P<close_time>\d{1,2}(?::\d{2})? ?[ap]m)"
+    # pattern = r"(?P<days>[A-Za-z-, ]+)\s+(?P<open_time>\d{1,2}(?::\d{2})? ?[ap]m)\s*-\s*(?P<close_time>\d{1,2}(?::\d{2})? ?[ap]m)"
+    pattern = r"(?P<days>[A-Za-z-, ]+)\s+(?P<times>(?:\d{1,2}(?::\d{2})? ?[ap]m\s*-\s*\d{1,2}(?::\d{2})? ?[ap]m\s*(?:\+\s*)?)+)"
     matches = re.finditer(pattern, hours_str)
     # take matches and put into a structure format
     schedule = []
@@ -42,17 +43,20 @@ def parse_hours(hours_str):
                 day_indices = list(range(start_idx, end_idx + 1))
             else:
                 day_indices = [list(calendar.day_abbr).index(day.strip()[:3])]
-
-            for day in day_indices:
-                schedule.append(
-                    {
-                        "day": day,
-                        "start": parse_time(match.group("open_time")),
-                        "end": parse_time(match.group("close_time")),
-                        "after_midnight": parse_time(match.group("close_time"))
-                        < parse_time(match.group("open_time")),
-                    }
-                )
+            
+            times = match.group("times").split(" + ")
+            for time in times:
+                open_time, close_time = time.split(" - ")
+                for day in day_indices:
+                    schedule.append(
+                        {
+                            "day": day,
+                            "start": parse_time(open_time.strip()),
+                            "end": parse_time(close_time.strip()),
+                            "after_midnight": parse_time(close_time.strip())
+                            < parse_time(open_time.strip()),
+                        }
+                    )
 
     return schedule
 
