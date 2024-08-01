@@ -5,3 +5,8 @@
 4. click search
 5. enter in a valid day and time
 6. see the entries
+
+frontend: `restaurant-frontend`
+ - nextjs
+backend: `restaurants`
+ - fastapi
