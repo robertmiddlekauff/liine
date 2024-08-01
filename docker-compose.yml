@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  fastapi-app:
+    build:
+      context: ./restaurants
+    container_name: restaurants-api
+    ports:
+      - "8000:8000"
+
+  nextjs-app:
+    build:
+      context: ./restaurant-frontend
+    container_name: restaurants-ui
+    ports:
+      - "3000:3000"
+    depends_on:
+      - fastapi-app
